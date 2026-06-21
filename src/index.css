@@ -1,0 +1,567 @@
+:root {
+  --bg: #0e0f13;
+  --surface: #16181f;
+  --surface-2: #1d2029;
+  --text: #f2f3f5;
+  --muted: #8b90a0;
+  --accent: #6c8cff;
+  --danger: #ff6b6b;
+  --line: #262a35;
+  --radius: 14px;
+  /* speaker colour-coding */
+  --you: #6c9cff;
+  --them: #43c9a2;
+  --note: #f2b53b;
+  --note-bg: rgba(242, 181, 59, 0.12);
+  color-scheme: dark;
+}
+
+/* Light "paper" theme — the Blackout bar follows --text, so it becomes true black here. */
+[data-theme='light'] {
+  --bg: #f6f6f4;
+  --surface: #ffffff;
+  --surface-2: #ececea;
+  --text: #16181c;
+  --muted: #6b7180;
+  --accent: #4f6cff;
+  --danger: #cf3a3a;
+  --line: #e3e3de;
+  --you: #2f5fe0;
+  --them: #0e9b72;
+  --note: #b9791a;
+  --note-bg: rgba(242, 181, 59, 0.16);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.screen {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: max(12px, env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0 16px;
+}
+.topbar h1 {
+  font-size: 26px;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.muted {
+  color: var(--muted);
+}
+
+/* buttons */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  color: var(--text);
+  background: var(--surface-2);
+  transition: transform 0.04s ease, background 0.15s ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn.primary {
+  background: var(--accent);
+  color: #0b0d16;
+}
+.btn.ghost {
+  background: transparent;
+  border-color: var(--line);
+}
+.btn.danger {
+  background: var(--danger);
+  color: #1a0b0b;
+}
+.btn.danger.ghost {
+  background: transparent;
+  color: var(--danger);
+  border-color: transparent;
+}
+.btn.big {
+  padding: 14px 20px;
+  font-size: 16px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+.btn.icon {
+  padding: 9px 12px;
+  font-size: 16px;
+  line-height: 1;
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* library */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  cursor: pointer;
+}
+.card:active {
+  background: var(--surface-2);
+}
+.card-main {
+  flex: 1;
+  min-width: 0;
+}
+.card-title {
+  font-size: 17px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-sub {
+  font-size: 13px;
+  margin-top: 3px;
+}
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+.empty p {
+  margin: 6px 0;
+}
+
+/* editor */
+.editor-tip {
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+.editor-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+/* reader */
+.reader {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 2px 20px;
+}
+.reader-title {
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  margin: 8px 0 20px;
+}
+.reader-body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+  line-height: 2;
+}
+.reader-line {
+  margin: 0 0 12px;
+}
+.speaker {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 700;
+  font-size: 0.8em;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin-right: 4px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.speaker--mine {
+  color: var(--you);
+}
+.speaker--other {
+  color: var(--them);
+}
+.speaker--note {
+  color: var(--note);
+}
+
+/* live label highlighting inside the editor */
+.cm-speaker {
+  font-weight: 700;
+}
+.cm-speaker.cm-speaker--mine {
+  color: var(--you);
+}
+.cm-speaker.cm-speaker--other {
+  color: var(--them);
+}
+.cm-speaker.cm-speaker--note {
+  color: var(--note);
+}
+
+/* colour-coded gutter so you can scan whose line it is */
+.reader-line,
+.reader-h {
+  border-left: 3px solid transparent;
+  padding-left: 12px;
+}
+.line--mine {
+  border-left-color: var(--you);
+}
+.line--other {
+  border-left-color: var(--them);
+}
+
+/* Notes: collapsible amber callout */
+.note {
+  border-left: 3px solid var(--note);
+  background: var(--note-bg);
+  border-radius: 8px;
+  padding: 2px 12px;
+  margin: 10px 0;
+}
+.note-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--note);
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 8px 0;
+}
+.note-chev {
+  width: 12px;
+  font-size: 11px;
+}
+.note-body {
+  font-style: italic;
+  color: var(--text);
+  opacity: 0.92;
+  padding-bottom: 8px;
+}
+.note-line {
+  margin: 0 0 4px;
+  font-size: 18px;
+  line-height: 1.7;
+}
+.blackout {
+  background: var(--text);
+  color: transparent;
+  border-radius: 4px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.celebrate {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 6px 0 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* practice footer */
+.practice-foot {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent, var(--bg) 22%);
+  padding-top: 14px;
+}
+.stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.stat {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+.stat-val {
+  font-size: 20px;
+  font-weight: 700;
+}
+.stat-lbl {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.actions .primary {
+  flex: 1;
+  min-width: 0;
+}
+.practice-hint {
+  text-align: center;
+  font-size: 12px;
+  margin: 10px 0 2px;
+}
+
+/* stats screen */
+.stats-h1 {
+  font-size: 24px;
+  margin: 4px 0 18px;
+  letter-spacing: -0.02em;
+}
+.stats-section {
+  margin-top: 26px;
+}
+.stats-h2 {
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px;
+}
+.daychart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 100px;
+}
+.daycol {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.daybar {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  min-height: 3px;
+}
+.daychart-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.scriptstats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.scriptstat-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.scriptstat-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.scriptstat-meta {
+  font-size: 13px;
+  white-space: nowrap;
+  flex: none;
+}
+.scriptstat-track {
+  background: var(--surface-2);
+  border-radius: 6px;
+  height: 10px;
+  overflow: hidden;
+}
+.scriptstat-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 6px;
+}
+
+/* modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 380px;
+  width: 100%;
+}
+.modal h3 {
+  margin: 0 0 8px;
+  font-size: 19px;
+}
+.modal p {
+  margin: 0 0 16px;
+}
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* rich editor */
+.rich {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0 10px;
+}
+.tool {
+  min-width: 40px;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.tool:active {
+  transform: scale(0.96);
+}
+.tool.active {
+  background: var(--accent);
+  color: #0b0d16;
+  border-color: transparent;
+}
+.tool:disabled {
+  opacity: 0.4;
+}
+.rich-editor {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.rich-editor .ProseMirror {
+  outline: none;
+  min-height: 44vh;
+  padding: 16px;
+  font: 17px/1.7 -apple-system, system-ui, sans-serif;
+}
+.rich-editor .ProseMirror > :first-child {
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+}
+.rich-editor .ProseMirror p {
+  margin: 0 0 8px;
+}
+.rich-editor .ProseMirror h2 {
+  font-size: 21px;
+  margin: 14px 0 6px;
+}
+.rich-editor .ProseMirror h3 {
+  font-size: 18px;
+  margin: 12px 0 6px;
+}
+.rich-editor .ProseMirror ul,
+.rich-editor .ProseMirror ol {
+  padding-left: 22px;
+  margin: 0 0 8px;
+}
+.rich-editor .ProseMirror p.is-editor-empty:first-child::before,
+.rich-editor .ProseMirror .is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* rich reader blocks */
+.reader-h {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.01em;
+  margin: 18px 0 8px;
+}
+h2.reader-h {
+  font-size: 22px;
+}
+h3.reader-h {
+  font-size: 19px;
+}
+.reader-li {
+  display: flex;
+  gap: 8px;
+}
+.li-marker {
+  flex: none;
+  color: var(--muted);
+  user-select: none;
+}
