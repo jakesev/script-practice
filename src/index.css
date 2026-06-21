@@ -434,6 +434,69 @@ body {
   border-radius: 6px;
 }
 
+/* sync screen */
+.sync-intro {
+  margin: 0 0 18px;
+  line-height: 1.6;
+}
+.sync-cta {
+  width: 100%;
+}
+.sync-or {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin: 22px 0 12px;
+}
+.sync-entry {
+  display: flex;
+  gap: 10px;
+}
+.sync-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: 16px/1.2 ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sync-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.sync-code-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.sync-code {
+  flex: 1;
+  min-width: 0;
+  font: 700 22px/1.2 ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  word-break: break-all;
+}
+.sync-hint {
+  margin: 0 0 22px;
+  line-height: 1.6;
+}
+.sync-actions {
+  display: flex;
+  gap: 10px;
+}
+.sync-actions .primary {
+  flex: 1;
+}
+
 /* modal */
 .overlay {
   position: fixed;

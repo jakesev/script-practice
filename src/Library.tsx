@@ -10,6 +10,7 @@ export function Library({
   onOpen,
   onEdit,
   onStats,
+  onSync,
 }: {
   scripts: Script[]
   theme: 'dark' | 'light'
@@ -18,12 +19,18 @@ export function Library({
   onOpen: (id: string) => void
   onEdit: (id: string) => void
   onStats: () => void
+  onSync?: () => void
 }) {
   return (
     <div className="screen">
       <header className="topbar">
         <h1>Scripts</h1>
         <div className="topbar-actions">
+          {onSync && (
+            <button className="btn ghost icon" onClick={onSync} aria-label="Sync" title="Sync across devices">
+              ⇄
+            </button>
+          )}
           <button className="btn ghost icon" onClick={onStats} aria-label="Stats" title="Your practice stats">
             📊
           </button>
