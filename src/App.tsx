@@ -5,19 +5,18 @@ import { Library } from './Library'
 import { Editor } from './Editor'
 import { Practice } from './Practice'
 import { Stats } from './StatsScreen'
-import { SyncScreen, type SyncStatus } from './SyncScreen'
-import { isSyncConfigured, pull, push, mergeScripts } from './sync'
+import { BackupScreen } from './BackupScreen'
+import { mergeScripts } from './backup'
 
 type View =
   | { name: 'library' }
   | { name: 'editor'; id: string }
   | { name: 'practice'; id: string }
   | { name: 'stats' }
-  | { name: 'sync' }
+  | { name: 'backup' }
 
 type Theme = 'dark' | 'light'
 const THEME_KEY = 'script-practice:theme'
-const SYNC_KEY = 'script-practice:sync-code'
 
 export function App() {
   const [scripts, setScripts] = useState<Script[]>(() => loadScripts())
@@ -37,60 +36,13 @@ export function App() {
 
   const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
 
-  // --- cross-device sync (optional; active only when a sync code is set + backend configured) ---
-  const [syncCode, setSyncCode] = useState<string | null>(() => localStorage.getItem(SYNC_KEY))
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
-
-  useEffect(() => {
-    if (syncCode) localStorage.setItem(SYNC_KEY, syncCode)
-    else localStorage.removeItem(SYNC_KEY)
-  }, [syncCode])
-
-  // Pull + merge whenever the active code changes (incl. on load).
-  useEffect(() => {
-    if (!syncCode || !isSyncConfigured()) return
-    let alive = true
-    setSyncStatus('syncing')
-    pull(syncCode)
-      .then((remote) => {
-        if (!alive) return
-        setScripts((prev) => {
-          const merged = mergeScripts(prev, remote)
-          saveScripts(merged)
-          return merged
-        })
-        setSyncStatus('synced')
-      })
-      .catch(() => alive && setSyncStatus('offline'))
-    return () => {
-      alive = false
-    }
-  }, [syncCode])
-
-  // Debounced push whenever scripts change while linked.
-  useEffect(() => {
-    if (!syncCode || !isSyncConfigured()) return
-    const t = setTimeout(() => {
-      push(syncCode, scripts)
-        .then(() => setSyncStatus('synced'))
-        .catch(() => setSyncStatus('offline'))
-    }, 1200)
-    return () => clearTimeout(t)
-  }, [scripts, syncCode])
-
-  const syncNow = () => {
-    if (!syncCode || !isSyncConfigured()) return
-    setSyncStatus('syncing')
-    pull(syncCode)
-      .then((remote) => {
-        const merged = mergeScripts(scripts, remote)
-        setScripts(merged)
-        saveScripts(merged)
-        return push(syncCode, merged)
-      })
-      .then(() => setSyncStatus('synced'))
-      .catch(() => setSyncStatus('offline'))
-  }
+  // Import a backup (merge by updatedAt) — local-only, no backend.
+  const importScripts = (incoming: Script[]) =>
+    setScripts((prev) => {
+      const merged = mergeScripts(prev, incoming)
+      saveScripts(merged)
+      return merged
+    })
 
   const upsert = (s: Script) =>
     setScripts((prev) => {
@@ -140,19 +92,13 @@ export function App() {
     return <Stats scripts={scripts} theme={theme} onToggleTheme={toggleTheme} onBack={() => setView({ name: 'library' })} />
   }
 
-  if (view.name === 'sync') {
+  if (view.name === 'backup') {
     return (
-      <SyncScreen
-        code={syncCode}
-        status={syncStatus}
+      <BackupScreen
+        scripts={scripts}
         theme={theme}
         onToggleTheme={toggleTheme}
-        onSetCode={(c) => setSyncCode(c)}
-        onClearCode={() => {
-          setSyncCode(null)
-          setSyncStatus('idle')
-        }}
-        onSyncNow={syncNow}
+        onImport={importScripts}
         onBack={() => setView({ name: 'library' })}
       />
     )
@@ -171,7 +117,7 @@ export function App() {
       onOpen={(id) => setView({ name: 'practice', id })}
       onEdit={(id) => setView({ name: 'editor', id })}
       onStats={() => setView({ name: 'stats' })}
-      onSync={isSyncConfigured() ? () => setView({ name: 'sync' }) : undefined}
+      onBackup={() => setView({ name: 'backup' })}
     />
   )
 }

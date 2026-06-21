@@ -22,8 +22,9 @@ Decisions live in [CONTEXT.md](../CONTEXT.md) (glossary) and [docs/adr/](adr/).
 | 2e | Follow mode (teleprompter) — ▶ Follow highlights the current line (yellow highlighter bar); tap the text to move down one readable line (skips Notes), auto-scrolls, clamps at last; ■ Stop exits | ✅ Built + browser-verified (advance/skip/clamp/stop all confirmed) |
 | 4a | PWA + private GitHub repo — manifest + service worker (offline precache), icons, base `/script-practice/`; repo `jakesev/script-practice` PRIVATE, pushed (36 files) | ✅ Done |
 | 4b | Live hosting (phone URL) — repo made PUBLIC (user choice), GitHub Pages via Actions. **LIVE at https://jakesev.github.io/script-practice/** — page+assets+manifest+sw+apple-icon all 200; installable offline PWA | ✅ Done |
-| 4c | Cross-device sync CLIENT — sync-code (no email), Supabase RPC, merge-by-updatedAt, hashed client-side; Sync screen + Library ⇄ button; dormant until keys set; `supabase/sync.sql` written | ✅ Built (40 tests); committed+pushed (dormant) |
-| 4d | Sync BACKEND — user creates free Supabase project + runs `supabase/sync.sql` + sends Project URL + anon key → I fill `syncConfig.ts`, push, live-verify round-trip | 📍 Now — user homework, then I finish |
+| 4c | ~~Sync client (Supabase sync-code)~~ — REMOVED: user dropped Supabase; sync.ts/syncConfig/SyncScreen + `@supabase/supabase-js` ripped out (bundle 786→575 KB) | ↩ Removed |
+| 4d | ~~Sync backend (Supabase)~~ — DROPPED: user doesn't want Supabase | ⬜ Dropped |
+| 4e | Backup & transfer (no backend) — Export (download file / copy code) + Import (file / paste code), merge-by-updatedAt; ⇅ from Library; replaces sync | ✅ Built + browser-verified (import round-trip B+A; 40 tests) |
 
 ## Open decisions
 - **App name** — folder `script-blackout` is a placeholder.
