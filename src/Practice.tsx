@@ -31,6 +31,21 @@ export function Practice({
   const hasCues = parsed.wordCount > total
   const done = total > 0 && hidden.size >= total
 
+  // Follow mode: tap the text to move a highlight down the readable (non-note, has-words) lines.
+  const stops = useMemo(
+    () =>
+      parsed.lines
+        .map((segs, idx) => ({ idx, kind: parsed.lineKinds[idx], hasWord: segs.some((s) => s.kind === 'word') }))
+        .filter((x) => x.kind !== 'note' && x.hasWord)
+        .map((x) => x.idx),
+    [parsed],
+  )
+  const [followPos, setFollowPos] = useState<number | null>(null)
+  const following = followPos !== null
+  const activeLineIndex = following && stops.length ? stops[Math.min(followPos, stops.length - 1)] : null
+  const toggleFollow = () => setFollowPos((p) => (p === null ? (stops.length ? 0 : null) : null))
+  const advance = () => setFollowPos((p) => (p === null ? null : Math.min(p + 1, stops.length - 1)))
+
   // A working copy + undo stack in refs, so rapid Space presses chain correctly (don't wait for a
   // re-render) and Undo restores the EXACT prior state — including High score.
   const workingRef = useRef(script)
@@ -108,6 +123,15 @@ export function Practice({
           ‹ Library
         </button>
         <div className="topbar-actions">
+          <button
+            className={'btn ghost' + (following ? ' active' : '')}
+            onClick={toggleFollow}
+            disabled={stops.length === 0}
+            aria-pressed={following}
+            title="Follow along — tap the text to move down a line"
+          >
+            {following ? '■ Stop' : '▶ Follow'}
+          </button>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           <button className="btn ghost" onClick={onEdit}>
             Edit
@@ -115,7 +139,13 @@ export function Practice({
         </div>
       </header>
 
-      <RichReader doc={doc} parsed={parsed} hidden={hidden} />
+      <RichReader
+        doc={doc}
+        parsed={parsed}
+        hidden={hidden}
+        activeLineIndex={activeLineIndex}
+        onReaderTap={following ? advance : undefined}
+      />
 
       {done && (
         <div className="celebrate">
@@ -148,7 +178,15 @@ export function Practice({
           </button>
         </div>
         <p className="practice-hint muted">
-          Press <b>Space</b> to log a read · <b>⌘Z</b> to undo
+          {following ? (
+            <>
+              <b>Tap the text</b> to move down a line · <b>■ Stop</b> to exit follow
+            </>
+          ) : (
+            <>
+              Press <b>Space</b> to log a read · <b>⌘Z</b> to undo
+            </>
+          )}
         </p>
       </footer>
 

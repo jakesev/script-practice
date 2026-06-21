@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { flattenBlocks, type Block, type PMMark, type PMNode } from './doc'
 import type { Parsed, Seg, SpeakerKind } from './words'
 
@@ -83,7 +83,10 @@ function NoteCallout({ items, hidden }: { items: { segs: Seg[]; block: Block }[]
       <button
         className="note-head"
         onMouseDown={(e) => e.preventDefault()}
-        onClick={() => setOpen((o) => !o)}
+        onClick={(e) => {
+          e.stopPropagation()
+          setOpen((o) => !o)
+        }}
         aria-expanded={open}
         aria-controls={bodyId}
       >
@@ -107,14 +110,25 @@ export function RichReader({
   doc,
   parsed,
   hidden,
+  activeLineIndex = null,
+  onReaderTap,
 }: {
   doc: PMNode
   parsed: Parsed
   hidden: Set<number>
+  /** Body-line index to highlight + scroll to while following (null = follow off). */
+  activeLineIndex?: number | null
+  /** Tap anywhere in the reader (used by follow mode to advance). */
+  onReaderTap?: () => void
 }) {
   const blocks = flattenBlocks(doc)
   const title = blocks[0]
   const bodyBlocks = blocks.slice(1)
+
+  const activeRef = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    if (activeLineIndex != null) activeRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  }, [activeLineIndex])
 
   const items: ReactNode[] = []
   let i = 0
@@ -135,24 +149,31 @@ export function RichReader({
     const segs = parsed.lines[i] ?? []
     const children = segs.length === 0 ? ' ' : renderSegs(segs, block, hidden, kind, false)
     const lineClass = kind === 'mine' || kind === 'other' ? ` line--${kind}` : ''
+    const active = i === activeLineIndex
+    const cls = lineClass + (active ? ' line--active' : '')
+    const ref = active
+      ? (el: HTMLElement | null) => {
+          activeRef.current = el
+        }
+      : undefined
 
     if (block.level >= 1) {
       const Tag = block.level <= 2 ? 'h2' : 'h3'
       items.push(
-        <Tag key={i} className={'reader-h' + lineClass}>
+        <Tag key={i} ref={ref} className={'reader-h' + cls}>
           {children}
         </Tag>,
       )
     } else if (block.listMarker) {
       items.push(
-        <p key={i} className={'reader-line reader-li' + lineClass}>
+        <p key={i} ref={ref} className={'reader-line reader-li' + cls}>
           <span className="li-marker">{block.listMarker}</span>
           <span className="li-body">{children}</span>
         </p>,
       )
     } else {
       items.push(
-        <p key={i} className={'reader-line' + lineClass}>
+        <p key={i} ref={ref} className={'reader-line' + cls}>
           {children}
         </p>,
       )
@@ -161,7 +182,7 @@ export function RichReader({
   }
 
   return (
-    <div className="reader">
+    <div className="reader" onClick={onReaderTap}>
       <h1 className="reader-title">{(title?.text ?? '').trim() || 'Untitled'}</h1>
       <div className="reader-body">{items}</div>
     </div>
