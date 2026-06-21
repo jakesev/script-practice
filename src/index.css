@@ -244,11 +244,27 @@ body {
   border-left: 3px solid transparent;
   padding-left: 12px;
 }
+.line--mine,
+.line--other {
+  border-radius: 8px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-right: 12px;
+}
 .line--mine {
   border-left-color: var(--you);
+  background: color-mix(in srgb, var(--you) 13%, transparent);
 }
 .line--other {
   border-left-color: var(--them);
+  background: color-mix(in srgb, var(--them) 13%, transparent);
+}
+
+/* ( … ) tips / stage directions — never blacked out, read as an aside */
+.tip {
+  color: var(--note);
+  font-style: italic;
+  font-size: 0.92em;
 }
 
 /* Notes: collapsible amber callout */

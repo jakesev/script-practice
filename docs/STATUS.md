@@ -18,9 +18,11 @@ Decisions live in [CONTEXT.md](../CONTEXT.md) (glossary) and [docs/adr/](adr/).
 | U1 | Desktop launcher — `~/Desktop/Launch Script Practice.command` double-click → starts dev server (port 3120, nvm PATH) + opens browser | ✅ Done + verified (HTTP 200 from clean env) |
 | 3 | Stats screen — totals (reads/streak/scripts) + 30-day activity chart + per-Script read/best bars; 📊 from Library; empty state | ✅ Built + browser-verified both themes (35 tests; stats math in stats.ts) |
 | 2c | Live editor highlighting — `You:` blue / `Them:` green / `Notes:` amber colour-coded AS YOU TYPE (ProseMirror decoration `speakerHighlight.ts`); title skipped | ✅ Built + browser-verified (DOM colours confirmed) |
+| 2d | Reading focus + tips — soft per-speaker block highlight (You faint-blue / Them faint-green / Notes amber) so sections stand out; `( … )` parentheticals = tips (amber italic, NEVER blacked, excluded from count), inline or in `Note:( … )` | ✅ Built + browser-verified (41 tests; 4/14 count proves tip exclusion) |
 | 4a | PWA + private GitHub repo — manifest + service worker (offline precache), icons, base `/script-practice/`; repo `jakesev/script-practice` PRIVATE, pushed (36 files) | ✅ Done |
 | 4b | Live hosting (phone URL) — repo made PUBLIC (user choice), GitHub Pages via Actions. **LIVE at https://jakesev.github.io/script-practice/** — page+assets+manifest+sw+apple-icon all 200; installable offline PWA | ✅ Done |
-| 4c | Sync across devices (email sign-in + backend) — same scripts on iPhone + laptop | ⬜ Paused — local for now |
+| 4c | Cross-device sync CLIENT — sync-code (no email), Supabase RPC, merge-by-updatedAt, hashed client-side; Sync screen + Library ⇄ button; dormant until keys set; `supabase/sync.sql` written | ✅ Built (40 tests); committed+pushed (dormant) |
+| 4d | Sync BACKEND — user creates free Supabase project + runs `supabase/sync.sql` + sends Project URL + anon key → I fill `syncConfig.ts`, push, live-verify round-trip | 📍 Now — user homework, then I finish |
 
 ## Open decisions
 - **App name** — folder `script-blackout` is a placeholder.

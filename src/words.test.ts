@@ -96,3 +96,15 @@ describe('speaker kinds + notes', () => {
     ])
   })
 })
+
+describe('tips (parentheticals)', () => {
+  it('words inside ( … ) are tips — never eligible, and tagged', () => {
+    const body = 'T\nYou: hey mate (smile, warm tone) how are you'
+    expect(eligibleCores(body)).toEqual(['hey', 'mate', 'how', 'are', 'you'])
+    const tips = parseBody(body)
+      .lines.flat()
+      .filter((s) => s.kind === 'word' && s.tip)
+      .map((s) => s.core)
+    expect(tips).toEqual(['smile', 'warm', 'tone'])
+  })
+})

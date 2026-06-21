@@ -33,6 +33,27 @@ export interface Seg {
   wordIndex?: number
   /** Whether this word may be blacked out (belongs to one of your lines). */
   eligible?: boolean
+  /** Inside a ( … ) aside — a tip/stage-direction: never blacked out, styled distinctly. */
+  tip?: boolean
+}
+
+/** Mark every character that sits inside a ( … ) span (parens included). */
+function parenMask(s: string): boolean[] {
+  const mask = new Array<boolean>(s.length).fill(false)
+  let depth = 0
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i]
+    if (c === '(') {
+      depth++
+      mask[i] = true
+    } else if (c === ')') {
+      mask[i] = depth > 0
+      if (depth > 0) depth--
+    } else {
+      mask[i] = depth > 0
+    }
+  }
+  return mask
 }
 
 export interface Parsed {
@@ -106,23 +127,26 @@ export function parseBody(body: string): Parsed {
         ? true
         : lineSpeaker !== null && MY_SPEAKERS.has(lineSpeaker)
 
+    const mask = parenMask(content)
     const re = /\S+|\s+/g
     let m: RegExpExecArray | null
     while ((m = re.exec(content)) !== null) {
       const text = m[0]
+      const tip = mask[m.index] ?? false
       if (/^\s+$/.test(text)) {
-        segs.push({ kind: 'space', text })
+        segs.push({ kind: 'space', text, tip })
         continue
       }
       const cm = text.match(WORD_CORE)
       if (!cm) {
-        segs.push({ kind: 'punct', text })
+        segs.push({ kind: 'punct', text, tip })
         continue
       }
       const core = cm[0]
       const start = cm.index ?? 0
       const idx = wordIndex++
-      if (mineNow) eligibleIndices.push(idx)
+      const eligible = mineNow && !tip
+      if (eligible) eligibleIndices.push(idx)
       segs.push({
         kind: 'word',
         text,
@@ -130,7 +154,8 @@ export function parseBody(body: string): Parsed {
         core,
         trail: text.slice(start + core.length),
         wordIndex: idx,
-        eligible: mineNow,
+        eligible,
+        tip,
       })
     }
 

@@ -17,6 +17,11 @@ function marksAt(block: Block, i: number): PMMark[] {
   return block.marksAt[i] ?? []
 }
 
+/** Wrap a ( … ) tip/stage-direction so it reads as an aside (never blacked out). */
+function tipWrap(tip: boolean | undefined, node: ReactNode): ReactNode {
+  return tip ? <span className="tip">{node}</span> : node
+}
+
 /** Render one line's segments. `kind` colours the speaker label; `hideLabel` drops it (notes use a header). */
 function renderSegs(
   segs: Seg[],
@@ -54,7 +59,7 @@ function renderSegs(
           </span>,
         )
       } else {
-        out.push(<span key={i}>{withMarks(marksAt(block, offset), text)}</span>)
+        out.push(<span key={i}>{tipWrap(seg.tip, withMarks(marksAt(block, offset), text))}</span>)
       }
     } else {
       out.push(<span key={i}>{withMarks(marksAt(block, offset), text)}</span>)
