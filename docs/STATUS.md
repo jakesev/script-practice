@@ -17,7 +17,10 @@ Decisions live in [CONTEXT.md](../CONTEXT.md) (glossary) and [docs/adr/](adr/).
 | 2v | Adversarial review of slice 2 (26 agents) — 14 findings: **8 fixed** (monologue `Stage:`/`INT:` no longer kills blackout #1; `\n`-in-text-node desync #2/3; save() trailing-`\n` wipe #6; heading clamp #12; ordered-list `start` #13; note `aria-controls` #9; dead `.editor` CSS #10; narrow-footer overflow #14; dropped unused `hasSpeakerLabels` #11), **4 accepted** (Space-past-done counts = intended #5; link-mark strip = safe-by-design #7; blackout AT cue = single-user scope #8; Notes-as-list-marker = niche #4). 34 tests; #1 live-verified | ✅ Done |
 | U1 | Desktop launcher — `~/Desktop/Launch Script Practice.command` double-click → starts dev server (port 3120, nvm PATH) + opens browser | ✅ Done + verified (HTTP 200 from clean env) |
 | 3 | Stats screen — totals (reads/streak/scripts) + 30-day activity chart + per-Script read/best bars; 📊 from Library; empty state | ✅ Built + browser-verified both themes (35 tests; stats math in stats.ts) |
-| 4 | Sync + email sign-in (swap localStorage → hosted backend), PWA install/hosting | ⬜ Paused — user chose "keep it local for now" (2026-06-21); revisit to sync onto iPhone |
+| 2c | Live editor highlighting — `You:` blue / `Them:` green / `Notes:` amber colour-coded AS YOU TYPE (ProseMirror decoration `speakerHighlight.ts`); title skipped | ✅ Built + browser-verified (DOM colours confirmed) |
+| 4a | PWA + private GitHub repo — manifest + service worker (offline precache), icons, base `/script-practice/`; repo `jakesev/script-practice` PRIVATE, pushed (36 files) | ✅ Done |
+| 4b | Live hosting (phone URL) — repo made PUBLIC (user choice), GitHub Pages via Actions. **LIVE at https://jakesev.github.io/script-practice/** — page+assets+manifest+sw+apple-icon all 200; installable offline PWA | ✅ Done |
+| 4c | Sync across devices (email sign-in + backend) — same scripts on iPhone + laptop | ⬜ Paused — local for now |
 
 ## Open decisions
 - **App name** — folder `script-blackout` is a placeholder.
