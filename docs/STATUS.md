@@ -25,6 +25,7 @@ Decisions live in [CONTEXT.md](../CONTEXT.md) (glossary) and [docs/adr/](adr/).
 | 4c | ~~Sync client (Supabase sync-code)~~ — REMOVED: user dropped Supabase; sync.ts/syncConfig/SyncScreen + `@supabase/supabase-js` ripped out (bundle 786→575 KB) | ↩ Removed |
 | 4d | ~~Sync backend (Supabase)~~ — DROPPED: user doesn't want Supabase | ⬜ Dropped |
 | 4e | Backup & transfer (no backend) — Export (download file / copy code) + Import (file / paste code), merge-by-updatedAt; ⇅ from Library; replaces sync | ✅ Built + browser-verified (import round-trip B+A; 40 tests) |
+| 5 | Cross-Claude access — GitHub backup verified in sync (`jakesev/script-practice`, public) + `CLAUDE.md` added so any Claude session (web / another computer) knows the app, commands, and push-goes-live rule | ✅ Done 2026-07-18 (typecheck ✅ · 40/40 tests) |
 
 ## Open decisions
 - **App name** — folder `script-blackout` is a placeholder.
